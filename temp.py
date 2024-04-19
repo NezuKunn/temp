@@ -1,24 +1,29 @@
-from django.http import JsonResponse, HttpResponse
+from flask import Flask, request, Response
 import requests
 
-# Здесь хранятся ваши API ключи
-API_KEYS = ['aa-00-aa-aa', 'admin-key-temp']
+app = Flask(__name__)
 
-def proxy(request):
-    api_key = request.META.get('HTTP_X_API_KEY')
+API_KEYS = ['aa-aa-00-aa', 'aa-00-aa-aa']
+
+@app.route('/proxy', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def proxy():
+    api_key = request.headers.get('X-API-KEY')
     if api_key not in API_KEYS:
-        return JsonResponse({'error': 'Недействительный API ключ'}, status=403)
+        return {'error': 'Недействительный API ключ'}, 403
 
-    url = f"http://localhost:8899{request.get_full_path()}"  # замените на URL вашего Solana RPC узла
+    url = f"http://67.217.54.102:8899{request.full_path}"
     response = requests.request(
         method=request.method,
         url=url,
         headers={key: value for (key, value) in request.headers.items() if key != 'Host'},
-        data=request.body,
+        data=request.data,
     )
 
-    return HttpResponse(
-        content=response.content,
+    return Response(
+        response=response.content,
         status=response.status_code,
-        content_type=response.headers['Content-Type']
+        headers=dict(response.headers),
     )
+
+if __name__ == '__main__':
+    app.run(host='67.217.54.102', port=8021)
