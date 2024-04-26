@@ -11,7 +11,7 @@ def proxy():
     if api_key not in API_KEYS:
         return {'error': 'Недействительный API ключ'}, 403
 
-    url = f"http://67.217.54.102:8899{request.full_path}"
+    url = f"http://localhost:8899{request.full_path}"
     response = requests.request(
         method=request.method,
         url=url,
@@ -26,4 +26,4 @@ def proxy():
     )
 
 if __name__ == '__main__':
-    app.run(host='67.217.54.102', port=8021)
+    app.run(host='144.202.63.224', port=3013)
