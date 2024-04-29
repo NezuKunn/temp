@@ -33,8 +33,8 @@ def proxy():
     
     url = request.json.get('urlTwit')
     response = requests.request(
-        method=request.method,
-        url=url,
+        method="get",
+        url=url
     )
 
     return Response(
