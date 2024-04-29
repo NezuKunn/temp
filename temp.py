@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 API_KEYS = ['aa-aa-00-aa', 'aa-00-aa-aa']
 
-@app.route('/proxy', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/proxy', methods=['POST'])
 def proxy():
     api_key = request.headers.get('X-API-KEY')
     if api_key not in API_KEYS:
@@ -17,6 +17,24 @@ def proxy():
         url=url,
         headers={key: value for (key, value) in request.headers.items() if key != 'Host'},
         data=request.data,
+    )
+
+    return Response(
+        response=response.content,
+        status=response.status_code,
+        headers=dict(response.headers),
+    )
+
+@app.route('/twit', methods=['POST'])
+def proxy():
+    api_key = request.headers.get('X-API-KEY')
+    if api_key not in API_KEYS:
+        return {'error': 'Недействительный API ключ'}, 403
+    
+    url = request.json.get('urlTwit')
+    response = requests.request(
+        method=request.method,
+        url=url,
     )
 
     return Response(
