@@ -26,7 +26,7 @@ def proxy():
     )
 
 @app.route('/twit', methods=['POST'])
-def proxy():
+def twit():
     api_key = request.headers.get('X-API-KEY')
     if api_key not in API_KEYS:
         return {'error': 'Недействительный API ключ'}, 403
