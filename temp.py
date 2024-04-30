@@ -1,5 +1,6 @@
 from flask import Flask, request, Response
 import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
@@ -37,8 +38,19 @@ def twit():
         url=url
     )
 
+    results = []
+
+    soup = BeautifulSoup(response.text, 'lxml')
+    mainblock = soup.find('div', class_='css-175oi2r r-1kbdv8c r-18u37iz r-1oszu61 r-3qxfft r-s1qlax r-2sztyj r-1efd50x r-5kkj8d r-h3s6tt r-1wtj0ep r-1igl3o0 r-rull8r r-qklmqi')
+    blocks = mainblock.find_all('div', class_='css-175oi2r r-18u37iz r-1h0z5md r-13awgt0')
+
+    for block in blocks:
+        span = block.find('span', class_='css-1qaijid r-bcqeeo r-qvutc0 r-poiln3')
+        text = span.text
+        results.append(text)
+
     return Response(
-        response=response.content,
+        response=results,
         status=response.status_code,
         headers=dict(response.headers),
     )
